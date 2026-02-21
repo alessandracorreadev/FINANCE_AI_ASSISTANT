@@ -11,6 +11,16 @@
   </head>
 
   <body>
-    <%= yield %>
+    <%= link_to "Skip to main content", "#main-content", class: "visually-hidden-focusable" %>
+    <header>
+      <%= render "shared/navbar" %> <!-- 👈 Add this for navbar -->
+    </header>
+
+    <main id="main-content">
+      <div class="container mt-5">
+        <%= yield %>
+      </div>
+    </main>
+    <%= render "shared/flashes" %>
   </body>
 </html>
