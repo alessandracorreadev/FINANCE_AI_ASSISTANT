@@ -1,18 +1,18 @@
 Rails.application.routes.draw do
-  get 'chats/new'
-  get 'chats/create'
-  get 'months/index'
-  get 'months/new'
-  get 'months/edit'
-  get 'months/show'
-  devise_for :users
-  root to: "pages#home"
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+  devise_for :users, path_names: {
+    sign_in: 'signin',
+    sign_up: 'signup',
+    sign_out: 'signout'
+  }
 
-  # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
-  # Can be used by load balancers and uptime monitors to verify that the app is live.
+  root "pages#home"
+
+  # Rotas aninhadas: meses (só logado); chat dentro do mês
+  authenticate :user do
+    resources :months do
+      resources :chats, only: [:new, :create]
+    end
+  end
+
   get "up" => "rails/health#show", as: :rails_health_check
-
-  # Defines the root path route ("/")
-  # root "posts#index"
 end
