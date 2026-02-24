@@ -1,4 +1,10 @@
 Rails.application.routes.draw do
+  get 'chats/new'
+  get 'chats/create'
+  get 'months/index'
+  get 'months/new'
+  get 'months/edit'
+  get 'months/show'
   devise_for :users
   root to: "pages#home"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
