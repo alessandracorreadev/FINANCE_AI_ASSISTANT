@@ -9,7 +9,7 @@ class ChatsController < ApplicationController
     @chat = @month.chats.build
     # Tudo cadastrado no mês está em @month (resumo, receitas, despesas, etc.).
     # Use @month e seus atributos para montar o contexto enviado à IA.
-    @month_summary  = @month.summary
+    @month_summary  = @month.overview
     @month_year     = @month.year
     @month_number   = @month.month
   end
@@ -19,7 +19,7 @@ class ChatsController < ApplicationController
     if @chat.save
       redirect_to month_path(@month), notice: "Chat iniciado."
     else
-      @month_summary = @month.summary
+      @month_summary = @month.overview
       @month_year    = @month.year
       @month_number  = @month.month
       render :new, status: :unprocessable_entity
