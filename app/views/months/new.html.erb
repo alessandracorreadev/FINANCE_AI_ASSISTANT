@@ -1,2 +1,60 @@
-<h1>Months#new</h1>
-<p>Find me in app/views/months/new.html.erb</p>
+<!-- app/views/months/new.html.erb -->
+
+<div class="container-fluid vh-100">
+  <div class="row h-100 align-items-start">
+
+    <!-- Coluna do texto -->
+    <div class="col-6 px-5">
+      <p class="text-success text-uppercase small fw-semibold mb-4">Finance AI Assistant</p>
+      <h1 class="display-4 fw-bold mb-3">
+        Add a new month <span class="text-success">and track your finances.</span>
+      </h1>
+      <p class="text-muted mb-5">
+        Fill in the details for this month. Include your income, expenses, and any notes.
+        Then chat with the AI assistant to get personalized financial advice.
+      </p>
+      <%= link_to "Back to months", months_path, class: "btn btn-outline-secondary btn-lg" %>
+    </div>
+
+    <!-- Coluna do formulário -->
+    <div class="col-6 d-flex justify-content-center align-items-start pt-5">
+      <div class="card shadow-sm" style="width: 100%; max-width: 500px;">
+        <div class="card-body p-4">
+          <h4 class="card-title mb-4">New Month</h4>
+
+          <%= simple_form_for @month do |f| %>
+            <div class="mb-3">
+              <%= f.input :year, placeholder: "e.g. 2026", input_html: { class: "form-control" } %>
+            </div>
+
+            <div class="mb-3">
+              <%= f.input :month, collection: [
+                ["January", "January"],
+                ["February", "February"],
+                ["March", "March"],
+                ["April", "April"],
+                ["May", "May"],
+                ["June", "June"],
+                ["July", "July"],
+                ["August", "August"],
+                ["September", "September"],
+                ["October", "October"],
+                ["November", "November"],
+                ["December", "December"]
+              ], prompt: "Select a month", input_html: { class: "form-select" } %>
+            </div>
+
+            <div class="mb-3">
+              <%= f.input :overview, as: :text, placeholder: "Describe your income, expenses, goals for this month...", input_html: { class: "form-control", rows: 5 } %>
+            </div>
+
+            <div class="d-grid">
+              <%= f.submit "Create Month", class: "btn btn-success btn-lg" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
