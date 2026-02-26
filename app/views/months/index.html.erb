@@ -1,2 +1,12 @@
-<h1>Months#index</h1>
-<p>Find me in app/views/months/index.html.erb</p>
+<h1>Welcome, <%= current_user.name %></h1>
+<h2>Months</h2>
+
+<ul>
+  <% @months.each do |month| %>
+    <li>
+      <%= "#{month.month}, #{month.year}" %>
+      <%= link_to "Take a look!", month_path(month) %>
+      <%= link_to "Delete!", month_path(month), data: { turbo_method: :delete, turbo_confirm: "Tem certeza?" } %>
+    </li>
+  <% end %>
+</ul>
