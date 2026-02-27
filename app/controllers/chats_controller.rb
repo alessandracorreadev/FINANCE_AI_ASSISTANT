@@ -4,11 +4,10 @@
 # A view/IA usa as informações financeiras do mês para dar orientação à pessoa.
 class ChatsController < ApplicationController
   before_action :set_month
+  before_action :set_chat, only: [:show]
 
   def new
     @chat = @month.chats.build
-    # Tudo cadastrado no mês está em @month (resumo, receitas, despesas, etc.).
-    # Use @month e seus atributos para montar o contexto enviado à IA.
     @month_summary  = @month.overview
     @month_year     = @month.year
     @month_number   = @month.month
@@ -17,7 +16,7 @@ class ChatsController < ApplicationController
   def create
     @chat = @month.chats.build
     if @chat.save
-      redirect_to month_path(@month), notice: "Chat iniciado."
+      redirect_to month_chat_path(@month, @chat), notice: "Chat iniciado."
     else
       @month_summary = @month.overview
       @month_year    = @month.year
@@ -26,9 +25,17 @@ class ChatsController < ApplicationController
     end
   end
 
+  def show
+    @messages = @chat.messages.order(:created_at)
+  end
+
   private
 
   def set_month
     @month = current_user.months.find(params[:month_id])
+  end
+
+  def set_chat
+    @chat = @month.chats.find(params[:id])
   end
 end
