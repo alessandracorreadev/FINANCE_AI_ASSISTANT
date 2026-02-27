@@ -1,20 +1,43 @@
-<h2>Log in</h2>
+<div class="container-fluid vh-100"> <!-- 1 -->
+  <div class="row h-100 align-items-start"> <!-- 2 -->
+
+    <div class="col-12 d-flex justify-content-center align-items-start pt-5"> <!-- 3 -->
+      <div class="card shadow-sm" style="width: 100%; max-width: 500px;"> <!-- 4 -->
+        <div class="card-body p-4"> <!-- 5 -->
+          <h4 class="card-title mb-4 text-success fw-semibold mb-4">Log in</h4>
 
 <%= simple_form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
-  <div class="form-inputs">
+
+    <div class="mb-3">
     <%= f.input :email,
                 required: false,
                 autofocus: true,
                 input_html: { autocomplete: "email" } %>
+    </div>
+
+    <div class="mb-3">
     <%= f.input :password,
                 required: false,
                 input_html: { autocomplete: "current-password" } %>
+    </div>
+
+    <div class="mb-3">
     <%= f.input :remember_me, as: :boolean if devise_mapping.rememberable? %>
+    </div>
+
+  <div class="d-grid">
+    <%= f.button :submit, "Log in", class: "btn btn-success btn-lg" %>
   </div>
 
-  <div class="form-actions">
-    <%= f.button :submit, "Log in" %>
-  </div>
 <% end %>
 
+<div class="d-grid m-2">
 <%= render "devise/shared/links" %>
+</div>
+
+        </div> <!-- 5 -->
+      </div> <!-- 4 -->
+    </div> <!-- 3 -->
+
+  </div> <!-- 2 -->
+</div> <!-- 1 -->
