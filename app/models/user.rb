@@ -4,5 +4,8 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 
-  has_many :months
+  has_many :months, dependent: :destroy
+  has_many :chats, through: :months
+
+  # validates :name, presence: true, length: { minimum: 2, maximum: 50 }
 end
