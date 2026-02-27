@@ -1,2 +1,44 @@
-<h1>Months#show</h1>
-<p>Find me in app/views/months/show.html.erb</p>
+<!-- app/views/months/show.html.erb -->
+
+<div class="container-fluid vh-100">
+  <div class="row h-100 align-items-start">
+
+    <!-- Coluna do texto -->
+    <div class="col-6 px-5">
+      <p class="text-success text-uppercase small fw-semibold mb-4">Finance AI Assistant</p>
+      <h1 class="display-4 fw-bold mb-3">
+        <%= @month.month %> <%= @month.year %> <span class="text-success">overview</span>
+      </h1>
+      <p class="text-muted mb-5">
+        Review your financial data for this month. You can edit the details or chat with the
+        AI assistant to get personalized advice based on your finances.
+      </p>
+      <div class="d-flex gap-2">
+        <%= link_to "Back to months", months_path, class: "btn btn-outline-secondary btn-lg" %>
+        <%= link_to "Edit", edit_month_path(@month), class: "btn btn-outline-primary btn-lg" %>
+        <%= link_to "Delete", month_path(@month), method: :delete, data: { turbo_method: :delete, turbo_confirm: "Are you sure you want to delete this month?" }, class: "btn btn-outline-danger btn-lg" %>
+      </div>
+    </div>
+
+    <!-- Coluna dos detalhes -->
+    <div class="col-6 d-flex justify-content-center align-items-start pt-5">
+      <div class="card shadow-sm" style="width: 100%; max-width: 500px;">
+        <div class="card-body p-4">
+          <h4 class="card-title mb-4"><%= @month.month %> <%= @month.year %></h4>
+
+          <div class="mb-4">
+            <h6 class="text-muted text-uppercase small">Overview</h6>
+            <p class="fs-6"><%= @month.overview.present? ? @month.overview : "No overview provided." %></p>
+          </div>
+
+          <hr>
+
+          <div class="d-grid">
+            <%= link_to "Chat with AI Assistant", new_month_chat_path(@month), class: "btn btn-success btn-lg" %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
