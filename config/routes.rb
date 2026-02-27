@@ -6,7 +6,9 @@ Rails.application.routes.draw do
   # Rotas aninhadas: meses (só logado); chat dentro do mês
 
   resources :months do
-    resources :chats, only: [:new, :create]
+    resources :chats, only: [:new, :create, :show] do
+      resources :messages, only: [:create]
+    end
   end
 
 
