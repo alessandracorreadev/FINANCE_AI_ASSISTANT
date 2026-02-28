@@ -1,0 +1,10 @@
+<%= turbo_stream.remove "empty-chat-message" %>
+
+<%= turbo_stream.append "chat-messages" do %>
+  <%= render partial: "messages/message", locals: { message: @user_message } %>
+  <%= render partial: "messages/message", locals: { message: @assistant_message } %>
+<% end %>
+
+<%= turbo_stream.replace "message-form" do %>
+  <%= render partial: "messages/form", locals: { month: @month, chat: @chat } %>
+<% end %>
