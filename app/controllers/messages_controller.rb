@@ -6,24 +6,21 @@ class MessagesController < ApplicationController
   def create
     @user_message = @chat.messages.create!(role: "user", content: params[:message][:content])
 
-    # Cria chat com histórico de mensagens anteriores
     llm_chat = RubyLLM.chat(model: "gpt-4o")
                       .with_instructions(system_prompt)
 
-    # Adiciona mensagens anteriores como contexto (exceto a atual que acabou de ser criada)
     previous_messages = @chat.messages.where.not(id: @user_message.id).order(:created_at)
     previous_messages.each do |msg|
       llm_chat.add_message(role: msg.role, content: msg.content)
     end
 
-    # Envia a mensagem atual
     response = llm_chat.ask(params[:message][:content])
 
     @assistant_message = @chat.messages.create!(role: "assistant", content: response.content)
 
     respond_to do |format|
       format.turbo_stream
-      format.html { redirect_to month_chat_path(@chat.month, @chat) }
+      format.html { redirect_to month_chat_path(@month) }
     end
   end
 
@@ -31,7 +28,7 @@ class MessagesController < ApplicationController
 
   def set_chat
     @month = current_user.months.find(params[:month_id])
-    @chat = @month.chats.find(params[:chat_id])
+    @chat = @month.chats.first_or_create!
   end
 
   def system_prompt
