@@ -23,7 +23,7 @@ class MessagesController < ApplicationController
 
     respond_to do |format|
       format.turbo_stream
-      format.html { redirect_to month_chat_path(@chat.month, @chat) }
+      format.html { redirect_to month_chat_path(@month) }
     end
   end
 
@@ -31,7 +31,7 @@ class MessagesController < ApplicationController
 
   def set_chat
     @month = current_user.months.find(params[:month_id])
-    @chat = @month.chats.find(params[:chat_id])
+    @chat = @month.chats.first_or_create!
   end
 
   def system_prompt
