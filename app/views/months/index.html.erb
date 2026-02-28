@@ -1,10 +1,10 @@
 <div class="container py-4">
   <p class="text-success text-uppercase small fw-semibold mb-4">Finance AI Assistant</p>
-  
+
   <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-      <h1 class="fw-bold">Welcome, <%= current_user.name %></h1>
-      <p class="text-muted mb-0">Manage your monthly finances</p>
+      <h1 class="fw-bold">Welcome, <%= current_user.email %></h1>
+      <p class="text-muted">Manage your monthly finances</p>
     </div>
     <div class="d-flex gap-2">
       <%= link_to "Overview", dashboard_path, class: "btn btn-outline-primary btn-lg" %>
@@ -12,6 +12,7 @@
     </div>
   </div>
 
+<div>
   <% if @months.any? %>
     <div class="card shadow-sm border-0">
       <ul class="list-group list-group-flush">
@@ -20,8 +21,8 @@
             <strong><%= month.month %> <%= month.year %></strong>
             <div>
               <%= link_to "View", month_path(month), class: "btn btn-sm btn-outline-primary me-2" %>
-              <%= link_to "Delete", month_path(month), 
-                  data: { turbo_method: :delete, turbo_confirm: "Are you sure?" }, 
+              <%= link_to "Delete", month_path(month),
+                  data: { turbo_method: :delete, turbo_confirm: "Are you sure?" },
                   class: "btn btn-sm btn-outline-danger" %>
             </div>
           </li>
