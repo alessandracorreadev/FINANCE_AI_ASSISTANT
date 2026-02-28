@@ -1,10 +1,18 @@
 <!-- app/views/months/show.html.erb -->
 
-<div class="container-fluid vh-100">
-  <div class="row h-100 align-items-start">
+<%
+  income = @month.financial_data&.dig("income").to_f
+  expenses = @month.financial_data&.dig("expenses").to_f
+  balance = income - expenses
+  savings_rate = income > 0 ? ((balance / income) * 100).round(1) : 0
+  categories = @month.financial_data&.dig("categories") || {}
+%>
 
-    <!-- Coluna do texto -->
-    <div class="col-6 px-5">
+<div class="container-fluid py-4">
+  <div class="row">
+
+    <!-- Left column - Text and actions -->
+    <div class="col-lg-6 px-5">
       <p class="text-success text-uppercase small fw-semibold mb-4">Finance AI Assistant</p>
       <h1 class="display-4 fw-bold mb-3">
         <%= @month.month %> <%= @month.year %> <span class="text-success">overview</span>
@@ -13,15 +21,95 @@
         Review your financial data for this month. You can edit the details or chat with the
         AI assistant to get personalized advice based on your finances.
       </p>
-      <div class="d-flex gap-2">
+      <div class="d-flex gap-2 mb-4">
         <%= link_to "Back to months", months_path, class: "btn btn-outline-secondary btn-lg" %>
         <%= link_to "Edit", edit_month_path(@month), class: "btn btn-outline-primary btn-lg" %>
         <%= link_to "Delete", month_path(@month), method: :delete, data: { turbo_method: :delete, turbo_confirm: "Are you sure you want to delete this month?" }, class: "btn btn-outline-danger btn-lg" %>
       </div>
+
+      <!-- Financial Summary Cards -->
+      <div class="row g-3 mb-4">
+        <div class="col-4">
+          <div class="card shadow-sm h-100 border-0">
+            <div class="card-body text-center py-3">
+              <p class="text-muted small text-uppercase mb-1">Income</p>
+              <h4 class="mb-0 text-success">$<%= number_with_delimiter(income.round(2)) %></h4>
+            </div>
+          </div>
+        </div>
+        <div class="col-4">
+          <div class="card shadow-sm h-100 border-0">
+            <div class="card-body text-center py-3">
+              <p class="text-muted small text-uppercase mb-1">Expenses</p>
+              <h4 class="mb-0 text-danger">$<%= number_with_delimiter(expenses.round(2)) %></h4>
+            </div>
+          </div>
+        </div>
+        <div class="col-4">
+          <div class="card shadow-sm h-100 border-0">
+            <div class="card-body text-center py-3">
+              <p class="text-muted small text-uppercase mb-1">Balance</p>
+              <h4 class="mb-0 <%= balance >= 0 ? 'text-success' : 'text-danger' %>">$<%= number_with_delimiter(balance.round(2)) %></h4>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Savings Rate -->
+      <% if income > 0 %>
+        <div class="card shadow-sm border-0 mb-4">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="fw-semibold">Savings Rate</span>
+              <span class="badge <%= savings_rate >= 20 ? 'bg-success' : savings_rate >= 0 ? 'bg-warning text-dark' : 'bg-danger' %>">
+                <%= savings_rate %>%
+              </span>
+            </div>
+            <div class="progress" style="height: 8px;">
+              <% bar_width = [savings_rate.abs, 100].min %>
+              <div class="progress-bar <%= savings_rate >= 20 ? 'bg-success' : savings_rate >= 0 ? 'bg-warning' : 'bg-danger' %>"
+                   role="progressbar" style="width: <%= bar_width %>%"></div>
+            </div>
+            <small class="text-muted mt-2 d-block">
+              <% if savings_rate >= 20 %>
+                Great job! You're saving more than 20% of your income.
+              <% elsif savings_rate >= 10 %>
+                Good progress! Try to reach 20% savings.
+              <% elsif savings_rate >= 0 %>
+                Breaking even. Consider reducing expenses.
+              <% else %>
+                Spending more than earning. Review your expenses.
+              <% end %>
+            </small>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- Expense Categories -->
+      <% if categories.any? %>
+        <div class="card shadow-sm border-0">
+          <div class="card-body">
+            <h6 class="text-muted text-uppercase small mb-3">Expense Breakdown</h6>
+            <% sorted_categories = categories.sort_by { |_, v| -v.to_f } %>
+            <% sorted_categories.each do |category, amount| %>
+              <% percentage = expenses > 0 ? ((amount.to_f / expenses) * 100).round(1) : 0 %>
+              <div class="mb-3">
+                <div class="d-flex justify-content-between mb-1">
+                  <span class="text-capitalize"><%= category %></span>
+                  <span class="fw-semibold">$<%= number_with_delimiter(amount.to_f.round(2)) %> <small class="text-muted">(<%= percentage %>%)</small></span>
+                </div>
+                <div class="progress" style="height: 5px;">
+                  <div class="progress-bar bg-danger" role="progressbar" style="width: <%= percentage %>%"></div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
     </div>
 
-    <!-- Coluna dos detalhes -->
-    <div class="col-6 d-flex justify-content-center align-items-start pt-5">
+    <!-- Right column - Details -->
+    <div class="col-lg-6 d-flex justify-content-center align-items-start pt-5">
       <div class="card shadow-sm" style="width: 100%; max-width: 500px;">
         <div class="card-body p-4">
           <h4 class="card-title mb-4"><%= @month.month %> <%= @month.year %></h4>
@@ -30,6 +118,28 @@
             <h6 class="text-muted text-uppercase small">Overview</h6>
             <p class="fs-6"><%= @month.overview.present? ? @month.overview : "No overview provided." %></p>
           </div>
+
+          <% if @month.financial_data.present? && (income > 0 || expenses > 0) %>
+            <div class="mb-4">
+              <h6 class="text-muted text-uppercase small">Financial Summary</h6>
+              <div class="d-flex justify-content-between mb-2">
+                <span>Income:</span>
+                <span class="text-success fw-bold">$<%= number_with_delimiter(income.round(2)) %></span>
+              </div>
+              <div class="d-flex justify-content-between mb-2">
+                <span>Expenses:</span>
+                <span class="text-danger fw-bold">$<%= number_with_delimiter(expenses.round(2)) %></span>
+              </div>
+              <div class="d-flex justify-content-between mb-2">
+                <span>Balance:</span>
+                <span class="fw-bold <%= balance >= 0 ? 'text-success' : 'text-danger' %>">$<%= number_with_delimiter(balance.round(2)) %></span>
+              </div>
+              <div class="d-flex justify-content-between">
+                <span>Daily average:</span>
+                <span class="fw-bold">$<%= number_with_delimiter((expenses / 30).round(2)) %>/day</span>
+              </div>
+            </div>
+          <% end %>
 
           <hr>
 
