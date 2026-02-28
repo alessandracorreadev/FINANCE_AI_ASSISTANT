@@ -7,8 +7,16 @@
       }
     }
 
-    function setupChatScroll() {
+    function clearMessageInput() {
+      const form = document.getElementById('message-form');
+      if (form) {
+        form.reset();
+      }
+    }
+
+    function setupChat() {
       scrollChatToBottom();
+      clearMessageInput();
 
       const chatMessages = document.getElementById('chat-messages');
       if (chatMessages) {
@@ -18,13 +26,14 @@
     }
 
     if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', setupChatScroll);
+      document.addEventListener('DOMContentLoaded', setupChat);
     } else {
-      setupChatScroll();
+      setupChat();
     }
 
-    document.addEventListener('turbo:load', setupChatScroll);
-    document.addEventListener('turbo:frame-load', setupChatScroll);
+    document.addEventListener('turbo:load', setupChat);
+    document.addEventListener('turbo:frame-load', setupChat);
+    document.addEventListener('turbo:render', clearMessageInput);
   })();
 </script>
 
@@ -53,8 +62,8 @@
         </div>
 
         <div class="card-footer">
-          <%= form_with url: month_chat_messages_path(@month), method: :post, local: true, class: "d-flex gap-2" do |f| %>
-            <input type="text" name="message[content]" class="form-control" placeholder="Type your question..." required autofocus>
+          <%= form_with url: month_chat_messages_path(@month), method: :post, local: true, class: "d-flex gap-2", html: { autocomplete: "off" }, id: "message-form" do |f| %>
+            <input type="text" name="message[content]" class="form-control" placeholder="Type your question..." required autofocus autocomplete="off">
             <button type="submit" class="btn btn-primary">Send</button>
           <% end %>
         </div>
