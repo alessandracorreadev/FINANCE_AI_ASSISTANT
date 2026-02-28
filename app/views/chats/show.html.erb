@@ -1,0 +1,67 @@
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">Chat - <%= @month.month %> <%= @month.year %></h5>
+          <%= link_to "Back to month", month_path(@month), class: "btn btn-outline-secondary btn-sm" %>
+        </div>
+
+        <div class="card-body" style="height: 400px; overflow-y: auto;" id="chat-messages" data-chat-scroll-target="messages">
+          <% if @messages.empty? %>
+            <p class="text-muted text-center" id="empty-chat-message">No messages yet. Start the conversation!</p>
+          <% else %>
+            <% @messages.each do |message| %>
+              <%= render partial: "messages/message", locals: { message: message } %>
+            <% end %>
+          <% end %>
+        </div>
+
+        <div class="card-footer">
+          <%= render partial: "messages/form", locals: { month: @month, chat: @chat } %>
+        </div>
+      </div>
+
+      <div class="mt-3">
+        <div class="card">
+          <div class="card-header">
+            <small class="text-muted">Month context</small>
+          </div>
+          <div class="card-body">
+            <p class="mb-0"><%= @month.overview.presence || "No overview provided for this month." %></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    function scrollChatToBottom() {
+      const chatContainer = document.getElementById('chat-messages');
+      if (chatContainer) {
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+      }
+    }
+
+    function setupChatScroll() {
+      scrollChatToBottom();
+
+      const chatMessages = document.getElementById('chat-messages');
+      if (chatMessages) {
+        const observer = new MutationObserver(scrollChatToBottom);
+        observer.observe(chatMessages, { childList: true, subtree: true });
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', setupChatScroll);
+    } else {
+      setupChatScroll();
+    }
+
+    document.addEventListener('turbo:load', setupChatScroll);
+    document.addEventListener('turbo:frame-load', setupChatScroll);
+  })();
+</script>
