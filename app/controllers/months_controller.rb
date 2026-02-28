@@ -14,7 +14,8 @@ class MonthsController < ApplicationController
   def create
     @month = current_user.months.build(month_params)
     if @month.save
-      redirect_to @month, notice: "Mês criado com sucesso."
+      extract_financial_data(@month)
+      redirect_to @month, notice: "Month created successfully."
     else
       render :new, status: :unprocessable_entity
     end
@@ -28,7 +29,8 @@ class MonthsController < ApplicationController
 
   def update
     if @month.update(month_params)
-      redirect_to @month, notice: "Mês atualizado com sucesso."
+      extract_financial_data(@month)
+      redirect_to @month, notice: "Month updated successfully."
     else
       render :edit, status: :unprocessable_entity
     end
@@ -36,7 +38,7 @@ class MonthsController < ApplicationController
 
   def destroy
     @month.destroy
-    redirect_to months_path, notice: "Mês removido."
+    redirect_to months_path, notice: "Month deleted."
   end
 
   private
@@ -47,5 +49,10 @@ class MonthsController < ApplicationController
 
   def month_params
     params.require(:month).permit(:year, :month, :overview)
+  end
+
+  def extract_financial_data(month)
+    data = ExtractFinancialDataService.new(month).call
+    month.update(financial_data: data)
   end
 end
