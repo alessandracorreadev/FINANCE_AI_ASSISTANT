@@ -1,3 +1,33 @@
+<script>
+  (function() {
+    function scrollChatToBottom() {
+      const chatContainer = document.getElementById('chat-messages');
+      if (chatContainer) {
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+      }
+    }
+
+    function setupChatScroll() {
+      scrollChatToBottom();
+
+      const chatMessages = document.getElementById('chat-messages');
+      if (chatMessages) {
+        const observer = new MutationObserver(scrollChatToBottom);
+        observer.observe(chatMessages, { childList: true, subtree: true });
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', setupChatScroll);
+    } else {
+      setupChatScroll();
+    }
+
+    document.addEventListener('turbo:load', setupChatScroll);
+    document.addEventListener('turbo:frame-load', setupChatScroll);
+  })();
+</script>
+
 <div class="container py-4">
   <div class="row justify-content-center">
     <div class="col-md-8">
@@ -23,7 +53,7 @@
         </div>
 
         <div class="card-footer">
-          <%= form_with url: month_chat_messages_path(@month, @chat), method: :post, local: true, class: "d-flex gap-2" do |f| %>
+          <%= form_with url: month_chat_messages_path(@month), method: :post, local: true, class: "d-flex gap-2" do |f| %>
             <input type="text" name="message[content]" class="form-control" placeholder="Digite sua pergunta..." required autofocus>
             <button type="submit" class="btn btn-primary">Enviar</button>
           <% end %>
