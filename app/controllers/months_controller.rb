@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
 class MonthsController < ApplicationController
+  MONTH_ORDER = %w[January February March April May June July August September October November December].freeze
+
   before_action :set_month, only: [:show, :edit, :update, :destroy]
 
   def index
-    @months = current_user.months.order(year: :desc, month: :desc)
+    @months = current_user.months.sort_by { |m| [-m.year, -MONTH_ORDER.index(m.month).to_i] }
   end
 
   def new

@@ -1,0 +1,158 @@
+<!-- app/views/dashboard/show.html.erb -->
+
+<div class="container-fluid py-4">
+  <div class="row">
+
+    <!-- Left column - Overview -->
+    <div class="col-lg-6 px-5">
+      <p class="text-success text-uppercase small fw-semibold mb-4">Finance AI Assistant</p>
+      <h1 class="display-4 fw-bold mb-3">
+        Financial <span class="text-success">Overview</span>
+      </h1>
+      <p class="text-muted mb-5">
+        Your complete financial summary across all months. This aggregates data from
+        <%= @months.count %> month<%= @months.count == 1 ? '' : 's' %>.
+      </p>
+      <div class="d-flex gap-2 mb-4">
+        <%= link_to "Back to months", months_path, class: "btn btn-outline-secondary btn-lg" %>
+      </div>
+
+      <% if @total_income > 0 || @total_expenses > 0 %>
+        <!-- Financial Summary Cards -->
+        <div class="row g-3 mb-4">
+          <div class="col-4">
+            <div class="card shadow-sm h-100 border-0">
+              <div class="card-body text-center py-3">
+                <div class="mb-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="text-success" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z"/>
+                  </svg>
+                </div>
+                <p class="text-muted small text-uppercase mb-1">Total Income</p>
+                <h4 class="mb-0 text-success">$<%= number_with_delimiter(@total_income.round(2)) %></h4>
+              </div>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="card shadow-sm h-100 border-0">
+              <div class="card-body text-center py-3">
+                <div class="mb-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="text-danger" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z"/>
+                  </svg>
+                </div>
+                <p class="text-muted small text-uppercase mb-1">Total Expenses</p>
+                <h4 class="mb-0 text-danger">$<%= number_with_delimiter(@total_expenses.round(2)) %></h4>
+              </div>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="card shadow-sm h-100 border-0">
+              <div class="card-body text-center py-3">
+                <div class="mb-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="<%= @balance >= 0 ? 'text-primary' : 'text-warning' %>" viewBox="0 0 16 16">
+                    <path d="M4 10.781c.148 1.667 1.513 2.85 3.591 3.003V15h1.043v-1.216c2.27-.179 3.678-1.438 3.678-3.3 0-1.59-.947-2.51-2.956-3.028l-.722-.187V3.467c1.122.11 1.879.714 2.07 1.616h1.47c-.166-1.6-1.54-2.748-3.54-2.875V1H7.591v1.233c-1.939.23-3.27 1.472-3.27 3.156 0 1.454.966 2.483 2.661 2.917l.61.162v4.031c-1.149-.17-1.94-.8-2.131-1.718H4zm3.391-3.836c-1.043-.263-1.6-.825-1.6-1.616 0-.944.704-1.641 1.8-1.828v3.495l-.2-.05zm1.591 1.872c1.287.323 1.852.859 1.852 1.769 0 1.097-.826 1.828-2.2 1.939V8.73l.348.086z"/>
+                  </svg>
+                </div>
+                <p class="text-muted small text-uppercase mb-1">Net Balance</p>
+                <h4 class="mb-0 <%= @balance >= 0 ? 'text-primary' : 'text-warning' %>">$<%= number_with_delimiter(@balance.round(2)) %></h4>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Savings Rate -->
+        <div class="card shadow-sm border-0 mb-4">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="text-muted small text-uppercase">Overall Savings Rate</span>
+              <span class="fw-bold <%= @savings_rate >= 20 ? 'text-success' : @savings_rate >= 10 ? 'text-warning' : 'text-danger' %>"><%= @savings_rate %>%</span>
+            </div>
+            <div class="progress" style="height: 8px;">
+              <div class="progress-bar <%= @savings_rate >= 20 ? 'bg-success' : @savings_rate >= 10 ? 'bg-warning' : 'bg-danger' %>" 
+                   role="progressbar" 
+                   style="width: <%= [@savings_rate, 100].min %>%"></div>
+            </div>
+          </div>
+        </div>
+
+        <% if @categories.any? %>
+          <!-- Expense Categories -->
+          <div class="card shadow-sm border-0 mb-4">
+            <div class="card-body">
+              <h6 class="text-muted text-uppercase small mb-3">Expense Breakdown (All Months)</h6>
+              <% @categories.sort_by { |_, v| -v }.each do |category, amount| %>
+                <% percentage = @total_expenses > 0 ? ((amount / @total_expenses) * 100).round(1) : 0 %>
+                <div class="mb-3">
+                  <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span class="text-capitalize"><%= category %></span>
+                    <span class="text-muted">$<%= number_with_delimiter(amount.round(2)) %> (<%= percentage %>%)</span>
+                  </div>
+                  <div class="progress" style="height: 6px;">
+                    <div class="progress-bar bg-danger" role="progressbar" style="width: <%= percentage %>%"></div>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      <% else %>
+        <div class="alert alert-info">
+          <strong>No financial data yet.</strong> Add months with financial information to see your overview.
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Right column - Months included -->
+    <div class="col-lg-6 d-flex justify-content-center align-items-start pt-5">
+      <div class="card shadow-sm" style="width: 100%; max-width: 500px;">
+        <div class="card-body p-4">
+          <h4 class="card-title mb-4">Financial Summary</h4>
+
+          <% if @total_income > 0 || @total_expenses > 0 %>
+            <div class="mb-4">
+              <h6 class="text-muted text-uppercase small">Totals</h6>
+              <div class="d-flex justify-content-between py-2 border-bottom">
+                <span class="text-muted">Total Income</span>
+                <span class="text-success fw-bold">$<%= number_with_delimiter(@total_income.round(2)) %></span>
+              </div>
+              <div class="d-flex justify-content-between py-2 border-bottom">
+                <span class="text-muted">Total Expenses</span>
+                <span class="text-danger fw-bold">$<%= number_with_delimiter(@total_expenses.round(2)) %></span>
+              </div>
+              <div class="d-flex justify-content-between py-2 border-bottom">
+                <span class="text-muted">Net Balance</span>
+                <span class="<%= @balance >= 0 ? 'text-success' : 'text-danger' %> fw-bold">$<%= number_with_delimiter(@balance.round(2)) %></span>
+              </div>
+              <div class="d-flex justify-content-between py-2">
+                <span class="text-muted">Monthly Average Expense</span>
+                <span class="fw-bold">$<%= number_with_delimiter((@total_expenses / [@months.count, 1].max).round(2)) %>/mo</span>
+              </div>
+            </div>
+          <% end %>
+
+          <hr>
+
+          <h6 class="text-muted text-uppercase small mb-3">Months Included (<%= @months.count %>)</h6>
+          <% if @months.any? %>
+            <ul class="list-group list-group-flush">
+              <% @months.each do |month| %>
+                <%= link_to month_path(month), class: "list-group-item list-group-item-action d-flex justify-content-between align-items-center px-0", style: "text-decoration: none;" do %>
+                  <span><%= month.month %> <%= month.year %></span>
+                  <% data = month.financial_data || {} %>
+                  <% month_balance = data["income"].to_f - data["expenses"].to_f %>
+                  <span class="badge <%= month_balance >= 0 ? 'bg-success' : 'bg-danger' %>">
+                    $<%= number_with_delimiter(month_balance.round(2)) %>
+                  </span>
+                <% end %>
+              <% end %>
+            </ul>
+          <% else %>
+            <p class="text-muted">No months added yet.</p>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
