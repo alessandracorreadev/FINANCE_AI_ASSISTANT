@@ -1,64 +1,60 @@
-# This file should ensure the existence of records required to run the application in every environment (production,
-# development, test). The code here should be idempotent so that it can be executed at any point in every environment.
-# The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
-#
-# Example:
-#
-#   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
-#     MovieGenre.find_or_create_by!(name: genre_name)
-#   end
+# db/seeds.rb
 
-# Limpa os registros anteriores (opcional)
-# Optional: clear previous records
+# Apaga tudo antes pra garantir idempotência
+Message.destroy_all
+Chat.destroy_all
 Month.destroy_all
+User.destroy_all
 
-user = User.first
+# Cria um usuário de exemplo
+user = User.create!(
+  email: "alejandro@example.com",
+  password: "123456",
+  name: "Alejandro"
+)
 
-months_data = [
-  {
-    month: "January",
-    year: 2026,
-    overview: "Higher expenses due to property tax and school supplies. Food costs increased because of dining out during vacation."
-  },
-  {
-    month: "February",
-    year: 2026,
-    overview: "More controlled spending. Reduced entertainment expenses and focused on saving. Credit card installments from January purchases were paid."
-  },
-  {
-    month: "March",
-    year: 2026,
-    overview: "Medical expenses increased due to consultations and exams. Grocery spending remained average. Small investments were started this month."
-  },
-  {
-    month: "April",
-    year: 2026,
-    overview: "Financially balanced month. No unexpected expenses. Fixed costs remained stable and electricity bill decreased slightly."
-  },
-  {
-    month: "May",
-    year: 2026,
-    overview: "Extra expenses with car maintenance. Fuel costs were higher than usual due to short trips. Other categories remained under control."
-  },
-  {
-    month: "June",
-    year: 2026,
-    overview: "Increased spending on restaurants and leisure activities. Purchased winter clothes. Budget remained within planned limits."
-  },
-  {
-    month: "July",
-    year: 2026,
-    overview: "Higher expenses due to vacation travel. Flights, accommodation, and food significantly impacted the monthly budget."
+# Meses do ano
+month_names = %w[January February March April May June July August September October November December]
+
+# Cria meses com financial_data
+month_names.each_with_index do |month_name, index|
+  income = rand(2000..5000)
+  expenses = rand(1000..4000)
+
+  # Categorias aleatórias
+  categories = {
+    rent: rand(500..1500),
+    food: rand(200..800),
+    transport: rand(50..300),
+    utilities: rand(100..400),
+    entertainment: rand(50..300)
   }
-]
 
-months_data.each do |data|
-  Month.create!(
-    month: data[:month],
-    year: data[:year],
-    overview: data[:overview],
-    user: user
+  # Ajusta para bater com total de despesas
+  categories_total = categories.values.sum
+  scale = expenses.to_f / categories_total
+  categories.transform_values! { |v| (v * scale).round(2) }
+
+  overview = "In #{month_name}, you earned $#{income} and spent $#{expenses}. Key expenses: #{categories.map { |k,v| "#{k}: $#{v}" }.join(", ")}."
+
+  month = Month.create!(
+    user: user,
+    year: 2025,
+    month: month_name,
+    overview: overview,
+    financial_data: {
+      "income" => income,
+      "expenses" => expenses,
+      "categories" => categories
+    }
   )
+
+  # Cria um chat pro mês
+  chat = month.chats.create!
+
+  # Cria algumas mensagens exemplo
+  chat.messages.create!(role: "user", content: "Hello AI, can you summarize my finances?")
+  chat.messages.create!(role: "assistant", content: "Sure! You earned $#{income} and spent $#{expenses} with major expenses in rent and food.")
 end
 
-puts "Months seed created successfully!"
+puts "Seed completo! Criados #{month_names.size} meses, com chats e mensagens para #{user.name}."
