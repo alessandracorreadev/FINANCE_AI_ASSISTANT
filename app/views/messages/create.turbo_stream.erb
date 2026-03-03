@@ -6,5 +6,5 @@
 <% end %>
 
 <%= turbo_stream.replace "message-form" do %>
-  <%= render partial: "messages/form", locals: { month: @month, chat: @chat } %>
+  <%= render partial: "messages/form", locals: { month: @month, chat: @chat, message: Message.new } %>
 <% end %>
