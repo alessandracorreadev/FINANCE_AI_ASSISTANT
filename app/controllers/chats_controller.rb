@@ -6,6 +6,7 @@ class ChatsController < ApplicationController
   def show
     @chat = @month.chats.first_or_create!
     @messages = @chat.messages.order(:created_at)
+    @message = Message.new
   end
 
   private

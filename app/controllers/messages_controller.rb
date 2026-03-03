@@ -18,11 +18,10 @@ class MessagesController < ApplicationController
 
     @assistant_message = @chat.messages.create!(role: "assistant", content: response.content)
 
-    # respond_to do |format|
-    #   format.turbo_stream
-    #   format.html { redirect_to month_chat_path(@month) }
-    # end
-    redirect_to month_chat_path(@month)
+    respond_to do |format|
+      format.turbo_stream
+      format.html { redirect_to month_chat_path(@month) }
+    end
   end
 
   private
