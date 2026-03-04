@@ -1,5 +1,6 @@
 class ApplicationController < ActionController::Base
   before_action :authenticate_user!
+  before_action :configure_permitted_parameters, if: :devise_controller?
 
   protected
 
@@ -8,12 +9,12 @@ class ApplicationController < ActionController::Base
     devise_parameter_sanitizer.permit(:account_update, keys: [:name])
   end
 
-  # Redireciona para o dashboard_path após o login
+  # Redireciona para months_path após o login/sign up
   def after_sign_in_path_for(resource)
-    months_path # Substitua pelo path desejado (ex: projects_path, root_path)
+    months_path
   end
 
   def after_sign_up_path_for(resource)
-    months_path # Substitua pelo path desejado (ex: projects_path, root_path)
+    months_path
   end
 end

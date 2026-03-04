@@ -1,10 +1,8 @@
 # frozen_string_literal: true
 
 class DashboardController < ApplicationController
-  MONTH_ORDER = %w[January February March April May June July August September October November December].freeze
-
   def show
-    @months = current_user.months.sort_by { |m| [-m.year, -MONTH_ORDER.index(m.month).to_i] }
+    @months = current_user.months.sort_by { |m| [-m.year, -Month::MONTH_ORDER.index(m.month).to_i] }
 
     @total_income = 0
     @total_expenses = 0
