@@ -7,7 +7,7 @@ class AiAssistantService
   end
 
   def call(user_message)
-    @chat.messages.create!(role: "user", content: user_message)
+    @user_message = @chat.messages.create!(role: "user", content: user_message)
 
     prompt_with_history = build_prompt_with_history(user_message)
 
@@ -15,9 +15,9 @@ class AiAssistantService
                       .with_instructions(system_prompt)
                       .ask(prompt_with_history)
 
-    @chat.messages.create!(role: "assistant", content: response.content)
+    @assistant_message = @chat.messages.create!(role: "assistant", content: response.content)
 
-    response.content
+    [@user_message, @assistant_message]
   end
 
   private
