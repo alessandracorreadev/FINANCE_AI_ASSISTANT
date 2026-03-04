@@ -8,31 +8,41 @@ class AiAssistantService
 
   def call(user_message)
     @user_message = @chat.messages.create!(role: "user", content: user_message)
-
     prompt_with_history = build_prompt_with_history(user_message)
-
     response = RubyLLM.chat(model: "gpt-4o")
                       .with_instructions(system_prompt)
                       .ask(prompt_with_history)
-
     @assistant_message = @chat.messages.create!(role: "assistant", content: response.content)
-
     [@user_message, @assistant_message]
+  end
+
+  def stream_response(assistant_message:, user_message_content:, &broadcast_block)
+    prompt = build_prompt_with_history(user_message_content)
+    RubyLLM.chat(model: "gpt-4o")
+           .with_instructions(system_prompt)
+           .ask(prompt) do |chunk|
+      next if chunk.content.blank?
+      assistant_message.content += chunk.content
+      broadcast_block.call(assistant_message) if broadcast_block
+    end
+    assistant_message.update!(content: assistant_message.content)
+    assistant_message
   end
 
   private
 
   def build_prompt_with_history(current_message)
-    previous_messages = @chat.messages.order(:created_at).last(10)
-
+    previous_messages = @chat.messages.where.not(content: [nil, ""]).order(:created_at).last(10)
     return current_message if previous_messages.empty?
 
-    history = previous_messages.map do |msg|
+    history_messages = previous_messages[0..-2]
+    history = history_messages.map do |msg|
       role = msg.role == "user" ? "User" : "Assistant"
       "#{role}: #{msg.content}"
     end.join("\n\n")
+    current = previous_messages.last&.role == "user" ? previous_messages.last.content : current_message
 
-    "Previous conversation:\n#{history}\n\nCurrent question: #{current_message}"
+    "Previous conversation:\n#{history}\n\nCurrent question: #{current}"
   end
 
   def system_prompt
