@@ -32,6 +32,8 @@ gem "devise"
 # AI Assistant
 gem "ruby_llm"
 
+gem "redis"
+
 # Use Redis adapter to run Action Cable in production
 # gem "redis", ">= 4.0.1"
 # For Action Cable with PostgreSQL (optional, for multi-process):
