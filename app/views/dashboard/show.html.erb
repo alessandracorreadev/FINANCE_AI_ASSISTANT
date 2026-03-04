@@ -69,8 +69,8 @@
               <span class="fw-bold <%= @savings_rate >= 20 ? 'text-success' : @savings_rate >= 10 ? 'text-warning' : 'text-danger' %>"><%= @savings_rate %>%</span>
             </div>
             <div class="progress" style="height: 8px;">
-              <div class="progress-bar <%= @savings_rate >= 20 ? 'bg-success' : @savings_rate >= 10 ? 'bg-warning' : 'bg-danger' %>" 
-                   role="progressbar" 
+              <div class="progress-bar <%= @savings_rate >= 20 ? 'bg-success' : @savings_rate >= 10 ? 'bg-warning' : 'bg-danger' %>"
+                   role="progressbar"
                    style="width: <%= [@savings_rate, 100].min %>%"></div>
             </div>
           </div>

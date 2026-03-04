@@ -1,22 +1,29 @@
-<div class="container-fluid vh-100">
-  <div class="row h-100 align-items-start">
+<div class="container-fluid min-vh-100">
+  <div class="row align-items-center">
 
     <!-- Coluna do texto -->
-    <div class="col-6 px-5">
-      <p class="text-success text-uppercase small fw-semibold mb-4">Finance AI Assistant</p>
-      <h1 class="display-4 fw-bold mb-3">
+    <div class="col-12 col-lg-6 px-4 px-lg-5 mb-5 mb-lg-0">
+      <p class="text-success text-uppercase small fw-semibold mb-4">
+        Finance AI Assistant
+      </p>
+
+      <h1 class="display-5 display-lg-4 fw-bold mb-3">
         Update this month <span class="text-success">and refine your strategy.</span>
       </h1>
-      <p class="text-muted mb-5">
+
+      <p class="text-muted mb-4 mb-lg-5">
         Adjust the details for this month. Update income, expenses, or notes
         to keep your financial overview accurate and up to date.
       </p>
-      <%= link_to "Back to months", months_path, class: "btn btn-outline-secondary btn-lg" %>
+
+      <%= link_to "Back to months",
+                  months_path,
+                  class: "btn btn-outline-secondary btn-lg w-100 w-lg-auto" %>
     </div>
 
     <!-- Coluna do formulário -->
-    <div class="col-6 d-flex justify-content-center align-items-start pt-5">
-      <div class="card shadow-sm" style="width: 100%; max-width: 500px;">
+    <div class="col-12 col-lg-6 d-flex justify-content-center px-3 px-lg-0">
+      <div class="card shadow-sm w-100" style="max-width: 500px;">
         <div class="card-body p-4">
           <h4 class="card-title mb-4">Edit Month</h4>
 
@@ -35,7 +42,8 @@
                         input_html: { rows: 5, class: "form-control" } %>
 
             <div class="d-grid mt-3">
-              <%= f.submit "Update Month", class: "btn btn-success btn-lg" %>
+              <%= f.submit "Update Month",
+                          class: "btn btn-success btn-lg" %>
             </div>
 
           <% end %>
