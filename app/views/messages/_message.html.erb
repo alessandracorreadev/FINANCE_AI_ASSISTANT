@@ -1,6 +1,15 @@
-<div class="mb-3 <%= message.role == 'user' ? 'text-end' : '' %>">
-  <div class="d-inline-block p-2 rounded <%= message.role == 'user' ? 'bg-primary text-white' : 'bg-light' %>" style="max-width: 80%;">
-    <small class="d-block fw-bold"><%= message.role == 'user' ? 'You' : 'Assistant' %></small>
-    <%= simple_format(message.content) %>
+<% if message.role == "user" %>
+  <div class="mb-3 text-end">
+    <div class="d-inline-block p-2 rounded bg-primary text-white" style="max-width: 80%;">
+      <small class="d-block fw-bold">You</small>
+      <%= simple_format(message.content) %>
+    </div>
   </div>
-</div>
+<% elsif message.role == "assistant" %>
+  <div class="mb-3" id="<%= dom_id(message) %>">
+    <div class="d-inline-block p-2 rounded bg-light" style="max-width: 80%;">
+      <small class="d-block fw-bold">Assistant</small>
+      <%= message.content.present? ? simple_format(message.content) : content_tag(:span, "...", class: "text-muted") %>
+    </div>
+  </div>
+<% end %>
