@@ -1,12 +1,9 @@
 development:
-  adapter: async
+  adapter: solid_cable
+  silence_polling: true
 
 test:
   adapter: test
 
 production:
-  adapter: <%= ENV["REDIS_URL"].present? ? "redis" : "async" %>
-  <% if ENV["REDIS_URL"].present? %>
-  url: <%= ENV["REDIS_URL"] %>
-  channel_prefix: finance_ai_assistant_production
-  <% end %>
+  adapter: solid_cable
