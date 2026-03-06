@@ -32,12 +32,8 @@ gem "devise"
 # AI Assistant
 gem "ruby_llm"
 
-gem "redis"
-
 # Use Redis adapter to run Action Cable in production
 # gem "redis", ">= 4.0.1"
-# Action Cable with PostgreSQL (no Redis needed)
-gem "solid_cable"
 
 # Use Kredis to get higher-level data types in Redis [https://github.com/rails/kredis]
 # gem "kredis"
@@ -58,7 +54,7 @@ gem "bootsnap", require: false
 gem "bootstrap", "~> 5.3"
 gem "autoprefixer-rails"
 gem "font-awesome-sass", "~> 6.1"
-gem "simple_form", "~> 5.3"
+gem "simple_form", github: "heartcombo/simple_form"
 gem "sassc-rails"
 
 group :development, :test do
