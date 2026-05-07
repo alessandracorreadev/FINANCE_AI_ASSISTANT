@@ -56,7 +56,7 @@ rails server
 
 ### Home page
 
-![Home Page](images/ai-chat.png)
+![Home Page](images/homepage.png)
 
 ### Add Month
 
