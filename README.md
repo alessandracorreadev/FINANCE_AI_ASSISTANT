@@ -46,4 +46,4 @@ rails server
 
 ## Tech stack
 
-- Rails 7, Devise, Bootstrap, Hotwire (Turbo, Stimulus), Simple Form, ruby_llm
+- Rails 7, Devise, Bootstrap, Hotwire (Turbo, Stimulus), Simple Form, ruby_llm, PostgreSQL, JavaScript, HTML & CSS, Bootstrap, Git & GitHub.
