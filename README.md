@@ -47,3 +47,25 @@ rails server
 ## Tech stack
 
 - Rails 7, Devise, Bootstrap, Hotwire (Turbo, Stimulus), Simple Form, ruby_llm, PostgreSQL, JavaScript, HTML & CSS, Bootstrap, Git & GitHub.
+
+- ## Screenshots
+
+### Landing Page
+
+![Landing Page](images/landingpage.png)
+
+### Home page
+
+![Home Page](images/ai-chat.png)
+
+### Add Month
+
+![Add Month](images/addmonthpage.png)
+
+### View Month
+
+![View Month](images/viewmonthpage.png)
+
+### Chat AI
+
+![Chat AI](images/chataipage.png)
